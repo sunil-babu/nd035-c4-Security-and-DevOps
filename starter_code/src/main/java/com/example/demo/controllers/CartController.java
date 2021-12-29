@@ -3,6 +3,9 @@ package com.example.demo.controllers;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +23,14 @@ import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.ModifyCartRequest;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/cart")
 public class CartController {
-	
-	@Autowired
+
+	private static final Logger log = LoggerFactory.getLogger(CartController.class);
+
 	private UserRepository userRepository;
-	
-	@Autowired
 	private CartRepository cartRepository;
-	
-	@Autowired
 	private ItemRepository itemRepository;
 	
 	@PostMapping("/addToCart")
@@ -45,6 +46,7 @@ public class CartController {
 		Cart cart = user.getCart();
 		IntStream.range(0, request.getQuantity())
 			.forEach(i -> cart.addItem(item.get()));
+		log.info("Item Added to cart :"+ request.getItemId());
 		cartRepository.save(cart);
 		return ResponseEntity.ok(cart);
 	}
@@ -62,6 +64,7 @@ public class CartController {
 		Cart cart = user.getCart();
 		IntStream.range(0, request.getQuantity())
 			.forEach(i -> cart.removeItem(item.get()));
+		log.info("Item Removed from cart :"+ request.getItemId());
 		cartRepository.save(cart);
 		return ResponseEntity.ok(cart);
 	}

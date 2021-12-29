@@ -2,6 +2,9 @@ package com.example.demo.controllers;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,14 +21,13 @@ import com.example.demo.model.persistence.repositories.OrderRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/order")
 public class OrderController {
-	
-	
-	@Autowired
+
+	private static final Logger log = LoggerFactory.getLogger(OrderController.class);
+
 	private UserRepository userRepository;
-	
-	@Autowired
 	private OrderRepository orderRepository;
 	
 	
@@ -35,6 +37,7 @@ public class OrderController {
 		if(user == null) {
 			return ResponseEntity.notFound().build();
 		}
+		log.info("user found for user :"+ username);
 		UserOrder order = UserOrder.createFromCart(user.getCart());
 		orderRepository.save(order);
 		return ResponseEntity.ok(order);
@@ -46,6 +49,7 @@ public class OrderController {
 		if(user == null) {
 			return ResponseEntity.notFound().build();
 		}
+		log.info("user found for user :"+ username);
 		return ResponseEntity.ok(orderRepository.findByUser(user));
 	}
 }
