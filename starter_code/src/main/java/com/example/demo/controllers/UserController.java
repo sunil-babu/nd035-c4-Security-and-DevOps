@@ -50,7 +50,10 @@ public class UserController {
 		user.setUsername(createUserRequest.getUsername());
 		log.info("Username set with : " + createUserRequest.getUsername());
 		Cart cart = new Cart();
-
+		if (createUserRequest.getPassword().length() <= 6 || !createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())) {
+			log.error("Cannot create user {} because the password is invalid", createUserRequest.getUsername());
+			return ResponseEntity.badRequest().build();
+		}
 		cartRepository.save(cart);
 		user.setCart(cart);
 		user.setPassword(bCryptPasswordEncoder.encode(createUserRequest.getPassword()));
